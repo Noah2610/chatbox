@@ -57,7 +57,8 @@ function startChat() {
 	// set socket receivers
 	socket.on("chat", updateChat);  // get chat history
 
-	
+	// create input field
+	mkInput();
 
 }
 
@@ -86,14 +87,12 @@ function updateChat(data) {
 
 	chatbox.scrollTop = chatbox.scrollHeight;
 
-	// console.log(content);
-
-	mkInput();
-
 }
 
 // send msg
 function send(msg) {
+	document.querySelector(".msgInput").value = "";  // clear input field
+
 	let data = {
 		name: name,
 		text: msg
@@ -109,13 +108,13 @@ function mkInput() {
 	input.setAttribute("type", "text");
 	// input.setAttribute("autofocus", "");
 	// input.focus();
-	chatbox.appendChild(input);
+	body.appendChild(input);
 	document.querySelector(".msgInput").focus();
 	// create submit button
 	let btn = document.createElement("button");
 	btn.className = "inputBtn";
 	btn.innerHTML = "Send";
-	chatbox.appendChild(btn);
+	body.appendChild(btn);
 	// set event listener for button
 	btn.addEventListener("click", () => send(input.value));
 	input.addEventListener("keydown", (event) => {if (event.key === "Enter") send(input.value)});

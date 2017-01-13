@@ -14,7 +14,6 @@ const io = socket(server);
 console.log(chalk.green("server running on port " + port));
 
 let chat = [];
-let connectName = "";
 
 // connection
 io.sockets.on("connection", (socket) => {
@@ -22,6 +21,7 @@ io.sockets.on("connection", (socket) => {
 	// get ip and id
 	const ip = socket.handshake.address.substr(7);
 	const id = socket.id;
+	let connectName = "";  // set empty name
 	// log connection
 	console.log(chalk.green(chalk.underline(curDate("H:M:S")) + " - connected: " + chalk.bold(id + " - " + ip)));
 
