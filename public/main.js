@@ -4,34 +4,27 @@ const loginDiv = document.querySelector(".loginDiv");
 const loginInput = document.querySelector("#loginInput");
 const loginBtn = document.querySelector("#loginBtn");
 const chatbox = document.querySelector(".chatboxDiv");
+const sound = document.querySelector("#sound");
 
 const port = 5555;
 let socket;
 let id;
 let name;
-// let chatActive = false;
 
 let chat;
-// let input;
-// let btn;
 
 
 // login
 function login() {
-	// console.log("login function called");
-
 	if (loginInput.value.length > 0) {  // name approved
 		name = loginInput.value;  // set name
-		// loginInput.removeAttribute("autofocus");
 		body.removeChild(loginDiv);  // remove login div
 		// create p with login name
 		let p = document.createElement("p");
 		p.id = "loginName";
 		p.innerHTML = `Logged in as <b>${name}</b>`;
-		// body.appendChild(p);
 		body.prepend(p);
-		// enable chatbox
-		// chatActive = true;
+		// start chatbox
 		startChat();
 
 	} else {  // name invalid
@@ -49,7 +42,8 @@ function login() {
 // on connection
 function startChat() {
 	// connect to socket
-	socket = io.connect("http://192.168.178.86:" + port);
+	// socket = io.connect("http://192.168.178.86:" + port);
+	socket = io.connect("http://10.0.0.10:" + port);
 
 	// emit new connection
 	socket.emit("newConnection", name);
@@ -64,11 +58,21 @@ function startChat() {
 
 // update chatbox
 function updateChat(data) {
+	// play notification sound
+	// if (window.closed) {
+		sound.play();
+		// console.log("test");
+	// }
 
 	chat = data;
 
+	if (document.querySelector("#chatTable")) {
+		chatbox.removeChild(document.querySelector("#chatTable"));
+	}
+
 	let table = document.createElement("table");
 	table.id = "chatTable";
+	// table.border = "1";
 	let content = "";
 
 	chat.forEach((msg,index) => {
@@ -82,16 +86,20 @@ function updateChat(data) {
 	});
 
 	table.innerHTML = content;
-	chatbox.innerHTML = "";
 	chatbox.appendChild(table);
-
+	// set chatbox style
+	chatbox.style.height = parseInt(body.clientHeight / 100 * 75) + "px";  // 75% - screen height
+	chatbox.style.borderBottom = "solid 2px black";  // bottom border
+	// scroll to bottom of chat
 	chatbox.scrollTop = chatbox.scrollHeight;
 
 }
 
 // send msg
-function send(msg) {
+function send(msgRaw) {
 	document.querySelector(".msgInput").value = "";  // clear input field
+
+	let msg = msgRaw.replace(/\n/g,"<br>");
 
 	let data = {
 		name: name,
@@ -103,24 +111,30 @@ function send(msg) {
 // create input field and submit button
 function mkInput() {
 	// create input field
-	let input = document.createElement("input");
+	// let input = document.createElement("input");
+	let input = document.createElement("textarea");
 	input.className = "msgInput";
-	input.setAttribute("type", "text");
-	// input.setAttribute("autofocus", "");
-	// input.focus();
+	// input.setAttribute("type", "text");
 	body.appendChild(input);
-	document.querySelector(".msgInput").focus();
+	input.focus();
+	// document.querySelector(".msgInput").value = "";
 	// create submit button
 	let btn = document.createElement("button");
 	btn.className = "inputBtn";
 	btn.innerHTML = "Send";
 	body.appendChild(btn);
-	// set event listener for button
+	// set event listeners
 	btn.addEventListener("click", () => send(input.value));
-	input.addEventListener("keydown", (event) => {if (event.key === "Enter") send(input.value)});
+	input.addEventListener("keydown", (event) => {
+		// submit msg
+		if (event.key === "Enter" && !event.shiftKey) {
+			event.preventDefault();
+			send(input.value);
+		}
+	});
 }
 
 
 // login event listeners
 loginBtn.addEventListener("click", login);
-loginInput.addEventListener("keydown", (event) => {if (event.key === "Enter") login()});
+loginInput.addEventListener("keyup", (event) => {if (event.key === "Enter") login()});
