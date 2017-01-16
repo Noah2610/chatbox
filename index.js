@@ -31,14 +31,14 @@ io.sockets.on("connection", (socket) => {
 		if (connectName == "") {
 			connectName = name;
 		}
-		chat.push({ name: "", time: curDate("H:M:S"), text: `<td class="sysMsg"><b>${name}</b> joined the chat.</td>` });
+		chat.push({ name: "", time: curDate("H:M:S"), text: `<td class="msg__sys"><b>${name}</b> joined the chat.</td>` });
 		// send chat history
 		io.sockets.emit("chat", chat);
 	});
 
 	// new chat message
 	socket.on("newMsg", (data) => {
-		chat.push({ name: data.name, time: curDate("H:M:S"), text: `<td class="userMsg">${data.text}</td>` });
+		chat.push({ name: data.name, time: curDate("H:M:S"), text: `<td class="msg__text">${data.text}</td>` });
 		// send chat history
 		io.sockets.emit("chat", chat);
 	});
@@ -48,7 +48,7 @@ io.sockets.on("connection", (socket) => {
 	// disconnection
 	socket.on("disconnect", () => {
 		// send chat diconnection info
-		chat.push({ name: "", time: curDate("H:M:S"), text: `<td class="sysMsg"><b>${connectName}</b> left the chat.</td>` });
+		chat.push({ name: "", time: curDate("H:M:S"), text: `<td class="msg__sys"><b>${connectName}</b> left the chat.</td>` });
 		// send chat history
 		io.sockets.emit("chat", chat);
 		// log disconnection

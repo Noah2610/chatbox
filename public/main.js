@@ -42,8 +42,8 @@ function login() {
 // on connection
 function startChat() {
 	// connect to socket
-	// socket = io.connect("http://192.168.178.86:" + port);
-	socket = io.connect("http://10.0.0.10:" + port);
+	socket = io.connect("http://192.168.178.86:" + port);
+	// socket = io.connect("http://192.168.0.30:" + port);
 
 	// emit new connection
 	socket.emit("newConnection", name);
@@ -59,10 +59,9 @@ function startChat() {
 // update chatbox
 function updateChat(data) {
 	// play notification sound
-	// if (window.closed) {
+	if (document.visibilityState == "hidden") {
 		sound.play();
-		// console.log("test");
-	// }
+	}
 
 	chat = data;
 
@@ -78,8 +77,8 @@ function updateChat(data) {
 	chat.forEach((msg,index) => {
 		content += `
 			<tr>
-			<th class="timestamp"><u>${msg.time}</u></th>
-			<th class="name">${msg.name}</th>
+			<td class="msg__time">${msg.time}</td>
+			<td class="msg__name">${msg.name}</td>
 			${msg.text}
 			</tr>
 		`;
@@ -130,6 +129,19 @@ function mkInput() {
 		if (event.key === "Enter" && !event.shiftKey) {
 			event.preventDefault();
 			send(input.value);
+		}
+
+		// word-wrap
+			// somethings broken here - doesn't handle 2 lines without spaces properly
+		if (input.scrollWidth > input.clientWidth) {
+			let val = input.value.split(/\n/g)[input.value.split(/\n/g).length - 1].split(/ /g);
+			if (val.length == 1) {  // no spaces
+				input.value = input.value.substring(0, input.value.length - val[0].length);
+				input.value += val[0].substring(0, val[0].length - 1) + "\n" + val[0].substring(val[0].length - 1);
+			} else if (val.length > 1) {  // space detected
+				val[val.length - 1] = "\n" + val[val.length - 1];
+				input.value = val.join(" ");
+			}
 		}
 	});
 }
