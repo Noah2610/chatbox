@@ -6,7 +6,7 @@ const loginBtn = document.querySelector("#loginBtn");
 const chatbox = document.querySelector(".chatboxDiv");
 const sound = document.querySelector("#sound");
 
-const port = 5555;
+const port = 3333;
 let socket;
 let id;
 let name;
@@ -42,8 +42,8 @@ function login() {
 // on connection
 function startChat() {
 	// connect to socket
-	socket = io.connect("http://192.168.178.86:" + port);
-	// socket = io.connect("http://192.168.0.30:" + port);
+	// socket = io.connect("http://192.168.178.86:" + port);
+	socket = io.connect("http://noahro.dynu.com:" + port);
 
 	// emit new connection
 	socket.emit("newConnection", name);

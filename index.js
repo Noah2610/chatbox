@@ -1,11 +1,11 @@
 
-import express from "express";
-import socket from "socket.io";
-import chalk from "chalk";
-import datetime from "node-datetime";
+const express = require("express");
+const socket = require("socket.io");
+const chalk = require("chalk");
+const datetime = require("node-datetime");
 
 
-const port = 5555;
+const port = 3333;
 const app = express();
 const server = app.listen(port);
 app.use(express.static("public"));
@@ -13,7 +13,7 @@ const io = socket(server);
 
 console.log(chalk.green("server running on port " + port));
 
-let chat = [];
+var chat = [];
 
 // connection
 io.sockets.on("connection", (socket) => {
@@ -21,7 +21,7 @@ io.sockets.on("connection", (socket) => {
 	// get ip and id
 	const ip = socket.handshake.address.substr(7);
 	const id = socket.id;
-	let connectName = "";  // set empty name
+	var connectName = "";  // set empty name
 	// log connection
 	console.log(chalk.green(chalk.underline(curDate("H:M:S")) + " - connected: " + chalk.bold(id + " - " + ip)));
 
